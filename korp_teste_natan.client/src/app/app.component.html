@@ -1,0 +1,25 @@
+﻿<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <span class="app-title">
+      <img src="/assets/images/korp.png" alt="Korp icon" width="20" height="20">
+      Sistema de Notas Fiscais - Korp
+    </span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/produtos" routerLinkActive="active-link">
+      <mat-icon>inventory</mat-icon>
+      Produtos
+    </button>
+    <button mat-button routerLink="/notas" routerLinkActive="active-link">
+      <mat-icon>description</mat-icon>
+      Notas Fiscais
+    </button>
+    <button mat-raised-button color="warn" routerLink="/notas/nova">
+      <mat-icon>add</mat-icon>
+      Nova Nota Fiscal
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="content">
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,41 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+}
+
+/* Snackbar customizado - Angular Material usa .mdc-snackbar__surface */
+.success-snackbar .mdc-snackbar__surface {
+  background-color: #4caf50 !important;
+}
+
+.success-snackbar .mdc-snackbar__label,
+.success-snackbar .mat-mdc-button {
+  color: white !important;
+}
+
+.error-snackbar .mdc-snackbar__surface {
+  background-color: #f44336 !important;
+}
+
+.error-snackbar .mdc-snackbar__label,
+.error-snackbar .mat-mdc-button {
+  color: white !important;
+}
+
+.info-snackbar .mdc-snackbar__surface {
+  background-color: #2196f3 !important;
+}
+
+.info-snackbar .mdc-snackbar__label,
+.info-snackbar .mat-mdc-button {
+  color: white !important;
+}

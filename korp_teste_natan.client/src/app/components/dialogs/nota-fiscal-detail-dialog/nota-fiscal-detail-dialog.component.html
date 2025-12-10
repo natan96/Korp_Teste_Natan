@@ -1,0 +1,81 @@
+<h2 mat-dialog-title>
+  <div class="title-container">
+    <mat-icon>description</mat-icon>
+    <span>Detalhes da Nota Fiscal NF-{{ notaFiscal().numero }}</span>
+  </div>
+</h2>
+
+<mat-dialog-content>
+  <div class="info-section">
+    <div class="info-row">
+      <span class="label">Status:</span>
+      <mat-chip [class.status-aberta]="notaFiscal().status === 0"
+                [class.status-fechada]="notaFiscal().status === 1">
+        {{ keyStatusClass[notaFiscal().status].label }}
+      </mat-chip>
+    </div>
+    <div class="info-row">
+      <span class="label">Data de Emissão:</span>
+      <span>{{ notaFiscal().dataEmissao | date: 'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+    @if (notaFiscal().dataFechamento) {
+      <div class="info-row">
+        <span class="label">Data de Fechamento:</span>
+        <span>{{ notaFiscal().dataFechamento | date: 'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="items-section">
+    <h3>
+      <mat-icon>inventory_2</mat-icon>
+      Itens da Nota Fiscal
+    </h3>
+
+    <table mat-table [dataSource]="notaFiscal().itens || []" class="items-table">
+      <!-- Coluna Código -->
+      <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef>Código</th>
+        <td mat-cell *matCellDef="let item">{{ item.codigoProduto }}</td>
+      </ng-container>
+
+      <!-- Coluna Descrição -->
+      <ng-container matColumnDef="descricao">
+        <th mat-header-cell *matHeaderCellDef>Descrição</th>
+        <td mat-cell *matCellDef="let item">{{ item.descricaoProduto }}</td>
+      </ng-container>
+
+      <!-- Coluna Quantidade -->
+      <ng-container matColumnDef="quantidade">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Quantidade</th>
+        <td mat-cell *matCellDef="let item" class="text-center">
+          <mat-chip class="quantidade-chip">{{ item.quantidade }}</mat-chip>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    @if (!notaFiscal().itens || notaFiscal().itens.length === 0) {
+      <div class="no-items">
+        <mat-icon>inbox</mat-icon>
+        <p>Nenhum item encontrado</p>
+      </div>
+    }
+
+    @if (notaFiscal().itens && notaFiscal().itens.length > 0) {
+      <div class="total-section">
+        <strong>Total de Itens:</strong>
+        <mat-chip color="primary" class="total-chip">{{ totalItens() }}</mat-chip>
+      </div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+    Fechar
+  </button>
+</mat-dialog-actions>

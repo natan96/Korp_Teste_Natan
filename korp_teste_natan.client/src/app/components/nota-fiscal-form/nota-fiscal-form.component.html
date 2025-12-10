@@ -1,0 +1,131 @@
+<div class="nota-fiscal-form-container">
+  <h2>Nova Nota Fiscal</h2>
+
+  <!-- Alerta de serviço indisponível -->
+  @if (!estoqueDisponivel) {
+    <mat-card class="alert-card">
+      <mat-card-content>
+        <div class="alert-content">
+          <mat-icon color="warn">warning</mat-icon>
+          <div>
+            <strong>Atenção:</strong> O serviço de estoque está temporariamente indisponível.
+            Algumas funcionalidades podem estar limitadas.
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Itens da Nota Fiscal</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="notaForm" (ngSubmit)="onSubmit()">
+        <div formArrayName="itens">
+          <div class="item-row" *ngFor="let item of itens.controls; let i = index">
+            <div [formGroupName]="i" class="item-form">
+              <span class="item-number">Item {{ i + 1 }}</span>
+
+              <mat-form-field appearance="outline" class="produto-field">
+                <mat-label>Produto</mat-label>
+                <mat-select formControlName="produtoId" (selectionChange)="onProdutoChange(i)">
+                  <mat-option *ngFor="let produto of produtos" [value]="produto.id">
+                    {{ produto.codigo }} - {{ produto.descricao }} (Saldo: {{ produto.saldo }})
+                  </mat-option>
+                </mat-select>
+                @if (item.get('produtoId')?.hasError('required')) {
+                  <mat-error>
+                    Selecione um produto
+                  </mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="quantidade-field">
+                <mat-label>Quantidade</mat-label>
+                <input matInput type="number" formControlName="quantidade" min="1"
+                       [max]="getSaldoDisponivel(i)"
+                       (blur)="validateQuantidade(i)">
+                <mat-hint>Disponível: {{ getSaldoDisponivel(i) }}</mat-hint>
+                @if (item.get('quantidade')?.hasError('required')) {
+                  <mat-error>
+                    Quantidade é obrigatória
+                  </mat-error>
+                }
+
+                @if (item.get('quantidade')?.hasError('min')) {
+                  <mat-error>
+                    Quantidade mínima: 1
+                  </mat-error>
+                }
+              </mat-form-field>
+
+              <button mat-icon-button color="warn" type="button" (click)="removeItem(i)"
+                      [disabled]="itens.length === 1"
+                      title="Remover item">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>        <div class="add-item-button">
+          <button mat-stroked-button color="primary" type="button" (click)="addItem()">
+            <mat-icon>add</mat-icon>
+            Adicionar Item
+          </button>
+        </div>
+
+        <hr class="divider">
+
+        <div class="form-actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="isFormDisabled"
+            style="display: inline-flex; align-items: center; gap: 8px;"
+          >
+            @if (loading) {
+              <mat-spinner diameter="20"></mat-spinner>
+            }
+
+            @if (!loading) {
+              <mat-icon>save</mat-icon>
+            }
+            <span>{{ loading ? 'Criando...' : 'Criar Nota Fiscal' }}</span>
+          </button>
+          <button mat-button type="button" (click)="cancel()" [disabled]="loading">
+            <mat-icon>cancel</mat-icon>
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Resumo -->
+  @if (itens.length > 0) {
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Resumo</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-content">
+          <div class="summary-item">
+            <mat-icon>shopping_cart</mat-icon>
+            <div>
+              <strong>Total de Itens</strong>
+              <p>{{ itens.length }}</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <mat-icon>inventory</mat-icon>
+            <div>
+              <strong>Quantidade Total</strong>
+              <p>{{ getTotalQuantidade() }}</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

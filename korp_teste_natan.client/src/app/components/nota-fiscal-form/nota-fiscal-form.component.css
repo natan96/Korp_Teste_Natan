@@ -1,0 +1,107 @@
+.nota-fiscal-form-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+h2 {
+  color: #3f51b5;
+  margin-bottom: 20px;
+}
+
+.alert-card {
+  margin-bottom: 20px;
+  background-color: #fff3cd;
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #856404;
+}
+
+.form-card,
+.summary-card {
+  margin-bottom: 20px;
+}
+
+.item-row {
+  margin-bottom: 16px;
+}
+
+.item-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.item-number {
+  font-weight: bold;
+  color: #3f51b5;
+  min-width: 60px;
+}
+
+.produto-field {
+  flex: 1;
+  min-width: 300px;
+}
+
+.quantidade-field {
+  width: 150px;
+}
+
+.add-item-button {
+  margin: 20px 0;
+}
+
+.divider {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.summary-content {
+  display: flex;
+  gap: 30px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.summary-item mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #1976d2;
+}
+
+.summary-item strong {
+  display: block;
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.summary-item p {
+  margin: 5px 0 0 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #1976d2;
+}

@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korp_Teste_Natan.Server", "Korp_Teste_Natan.Server\Korp_Teste_Natan.Server.csproj", "{E732851A-057E-4855-B6BB-0A4A0C953D17}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "korp_teste_natan.client", "korp_teste_natan.client\korp_teste_natan.client.esproj", "{F2F13774-072E-4291-B541-1B817CE8BACD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E732851A-057E-4855-B6BB-0A4A0C953D17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E732851A-057E-4855-B6BB-0A4A0C953D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E732851A-057E-4855-B6BB-0A4A0C953D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E732851A-057E-4855-B6BB-0A4A0C953D17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2F13774-072E-4291-B541-1B817CE8BACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2F13774-072E-4291-B541-1B817CE8BACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2F13774-072E-4291-B541-1B817CE8BACD}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F2F13774-072E-4291-B541-1B817CE8BACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2F13774-072E-4291-B541-1B817CE8BACD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2F13774-072E-4291-B541-1B817CE8BACD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A9820AB9-6D3A-4F31-BEC1-2B18F8A092AF}
+	EndGlobalSection
+EndGlobal

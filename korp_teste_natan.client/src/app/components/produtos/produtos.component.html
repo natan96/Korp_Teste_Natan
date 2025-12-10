@@ -1,0 +1,145 @@
+<div class="produtos-container">
+  <h2>Cadastro de Produtos</h2>
+
+  <!-- Formulário de Cadastro/Edição -->
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>{{ editMode ? 'Editar Produto' : 'Novo Produto' }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="produtoForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Código</mat-label>
+            <input matInput formControlName="codigo" placeholder="Ex: PROD001" maxlength="50">
+            @if (produtoForm.get('codigo')?.hasError('required')) {
+              <mat-error>
+                Código é obrigatório
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Descrição</mat-label>
+            <input matInput formControlName="descricao" placeholder="Descrição do produto" maxlength="200">
+            @if (produtoForm.get('descricao')?.hasError('required')) {
+              <mat-error>
+                Descrição é obrigatória
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field-small">
+            <mat-label>Saldo</mat-label>
+            <input matInput type="number" formControlName="saldo" min="0" [readonly]="editMode">
+            @if (editMode) {
+              <mat-hint>O saldo não pode ser editado manualmente</mat-hint>
+            }
+
+            @if (produtoForm.get('saldo')?.hasError('required')) {
+              <mat-error>
+                Saldo é obrigatório
+              </mat-error>
+            }
+
+            @if (produtoForm.get('saldo')?.hasError('min')) {
+              <mat-error>
+                Saldo não pode ser negativo
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="produtoForm.invalid || loading">
+            <mat-icon>{{ editMode ? 'save' : 'add' }}</mat-icon>
+            {{ editMode ? 'Atualizar' : 'Cadastrar' }}
+          </button>
+
+          @if (editMode) {
+            <button mat-button type="button" (click)="resetForm()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+          }
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tabela de Produtos -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title class="title-table">Produtos Cadastrados</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Filtro -->
+      <div class="filters-container">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Filtrar por Código ou Descrição</mat-label>
+          <input matInput
+                 [(ngModel)]="filtro"
+                 (ngModelChange)="aplicarFiltro()"
+                 placeholder="Digite código ou descrição do produto">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      @if (filtro) {
+        <div class="filter-summary">
+          <mat-chip>{{ produtosFiltrados.length }} produtos encontrados</mat-chip>
+        </div>
+      }
+
+      @if (loading) {
+        <div class="loading-overlay">
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      }
+
+      <table mat-table [dataSource]="produtosFiltrados" class="produtos-table">
+        <!-- Coluna Código -->
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>Código</th>
+          <td mat-cell *matCellDef="let produto">{{ produto.codigo }}</td>
+        </ng-container>
+
+        <!-- Coluna Descrição -->
+        <ng-container matColumnDef="descricao">
+          <th mat-header-cell *matHeaderCellDef>Descrição</th>
+          <td mat-cell *matCellDef="let produto">{{ produto.descricao }}</td>
+        </ng-container>
+
+        <!-- Coluna Saldo -->
+        <ng-container matColumnDef="saldo">
+          <th mat-header-cell *matHeaderCellDef>Saldo</th>
+          <td mat-cell *matCellDef="let produto">
+            <mat-chip [class.low-stock]="produto.saldo < 10">
+              {{ produto.saldo }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Coluna Ações -->
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;">Ações</th>
+          <td mat-cell *matCellDef="let produto" style="text-align: center;">
+            <button mat-icon-button color="primary" (click)="editProduto(produto)"
+                    matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      @if (produtosFiltrados.length === 0 && !loading) {
+        <div class="no-data">
+          <mat-icon>inbox</mat-icon>
+          <p>Nenhum produto cadastrado</p>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

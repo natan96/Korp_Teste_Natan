@@ -1,0 +1,28 @@
+﻿.spacer {
+  flex: 1 1 auto;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.active-link {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.content {
+  min-height: calc(100vh - 64px);
+  background-color: #fafafa;
+}
+
+mat-toolbar button {
+  margin-left: 8px;
+}
+
+table {
+    margin: 0 auto;
+}

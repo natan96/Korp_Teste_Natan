@@ -1,0 +1,153 @@
+<div class="nota-fiscal-list-container">
+  <h2>Notas Fiscais</h2>
+
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title class="title-table">Listagem de Notas Fiscais</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Filtros -->
+      <div class="filters-container">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Status</mat-label>
+          <mat-select [value]="filtroStatus()" (selectionChange)="onFiltroStatusChange($event.value)">
+            <mat-option [value]="-1">Todas</mat-option>
+            <mat-option [value]="0">Abertas</mat-option>
+            <mat-option [value]="1">Fechadas</mat-option>
+          </mat-select>
+          <mat-icon matPrefix>filter_list</mat-icon>
+        </mat-form-field>
+      </div>
+      @if (filtroStatus() !== -1) {
+        <div class="filter-summary">
+          <mat-chip>{{ notasFiscaisFiltradas().length }} notas encontradas</mat-chip>
+        </div>
+      }
+
+      @if (loading) {
+        <div class="loading-overlay">
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      }
+
+      <table mat-table [dataSource]="notasFiscaisFiltradas()" class="notas-table">
+        <!-- Coluna Número -->
+        <ng-container matColumnDef="numero">
+          <th mat-header-cell *matHeaderCellDef>Número</th>
+          <td mat-cell *matCellDef="let nota">
+            <strong>NF-{{ nota.numero }}</strong>
+          </td>
+        </ng-container>
+
+        <!-- Coluna Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let nota">
+            <mat-chip [ngClass]="keyStatusClass[nota.status].class">
+              {{ keyStatusClass[nota.status].label }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Coluna Data Emissão -->
+        <ng-container matColumnDef="dataEmissao">
+          <th mat-header-cell *matHeaderCellDef>Data Emissão</th>
+          <td mat-cell *matCellDef="let nota">
+            {{ nota.dataEmissao | date: 'dd/MM/yyyy HH:mm':'UTC-3' }}
+          </td>
+        </ng-container>
+
+        <!-- Coluna Total de Itens -->
+        <ng-container matColumnDef="totalItens">
+          <th mat-header-cell *matHeaderCellDef>Itens</th>
+          <td mat-cell *matCellDef="let nota">
+            {{ sumNotasItems().get(nota.id) || 0 }}
+          </td>
+        </ng-container>
+
+        <!-- Coluna Ações -->
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;">Ações</th>
+          <td mat-cell *matCellDef="let nota">
+            <div class="action-buttons">
+              <!-- Botão Visualizar -->
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="visualizarNota(nota)"
+                title="Visualizar detalhes e itens">
+                <mat-icon>visibility</mat-icon>
+              </button>
+
+              <!-- Botão Imprimir -->
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="!podeImprimir(nota)"
+                (click)="imprimirNota(nota)"
+                [title]="nota.status === 'Fechada' ? 'Nota já foi impressa' : 'Imprimir e fechar nota fiscal'"
+                style="display: inline-flex; align-items: center; gap: 8px;">
+                @if (!isImprimindo(nota.id)) {
+                  <mat-icon>print</mat-icon>
+                }
+                <span>{{ isImprimindo(nota.id) ? 'Imprimindo...' : 'Imprimir' }}</span>
+              </button>
+
+              <!-- Indicador de processamento -->
+               @if (isImprimindo(nota.id)) {
+                 <div class="processing-indicator">
+                   <mat-icon>autorenew</mat-icon>
+                 </div>
+               }
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            [class.nota-fechada]="row.status === 'Fechada'"></tr>
+      </table>
+
+      @if (notasFiscais().length === 0 && !loading) {
+        <div class="no-data">
+          <mat-icon>description</mat-icon>
+          <p>Nenhuma nota fiscal cadastrada</p>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Card de Detalhes (expandido) -->
+   @if (notasFiscais().length > 0) {
+     <mat-card class="details-card">
+       <mat-card-header>
+         <mat-card-title>Informações</mat-card-title>
+       </mat-card-header>
+       <mat-card-content>
+         <div class="info-grid">
+           <div class="info-item">
+             <mat-icon>description</mat-icon>
+             <div>
+               <strong>Total de Notas</strong>
+               <p>{{ notasFiscais().length }}</p>
+             </div>
+           </div>
+           <div class="info-item">
+             <mat-icon>lock_open</mat-icon>
+             <div>
+               <strong>Notas Abertas</strong>
+               <p>{{ countNotasAbertas() }}</p>
+             </div>
+           </div>
+           <div class="info-item">
+             <mat-icon>lock</mat-icon>
+             <div>
+               <strong>Notas Fechadas</strong>
+               <p>{{ countNotasFechadas() }}</p>
+             </div>
+           </div>
+         </div>
+       </mat-card-content>
+     </mat-card>
+   }
+</div>

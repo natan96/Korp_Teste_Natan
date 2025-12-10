@@ -1,0 +1,89 @@
+.produtos-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 {
+  color: #3f51b5;
+  margin-bottom: 20px;
+}
+
+.form-card,
+.table-card {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 250px;
+}
+
+.form-field-small {
+  flex: 0 0 150px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.produtos-table {
+  width: 100%;
+}
+
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.title-table {
+  margin-bottom: 1rem;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
+.no-data mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+mat-chip.low-stock {
+  background-color: #ffeb3b !important;
+  color: #000;
+}
+
+.filters-container {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.filters-container .filter-field {
+  flex: 1;
+  min-width: 300px;
+}
+
+.filter-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
