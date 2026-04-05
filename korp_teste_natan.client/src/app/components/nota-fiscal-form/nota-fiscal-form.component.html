@@ -1,0 +1,365 @@
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog
+  [style]="{ width: '500px' }"
+  styleClass="rounded-xl"
+></p-confirmDialog>
+
+<div
+  class="min-h-screen py-8 px-4 sm:px-6 lg:px-8"
+  style="background-color: #f4f4f4"
+>
+  <div class="max-w-6xl mx-auto">
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold" style="color: #444444">
+        Nova Nota Fiscal
+      </h1>
+      <p class="text-gray-600">
+        Selecione os produtos e quantidades para emitir a nota fiscal
+      </p>
+    </div>
+
+    @if (!estoqueDisponivel) {
+      <div
+        class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 rounded-r-lg shadow-lg"
+      >
+        <div class="flex items-start gap-3">
+          <i class="pi pi-exclamation-triangle text-yellow-600 text-2xl"></i>
+          <div class="flex-1">
+            <strong class="text-yellow-800 block mb-1">Atenção!</strong>
+            <p class="text-yellow-700 text-sm">
+              O serviço de estoque está temporariamente indisponível. Algumas
+              funcionalidades podem estar limitadas.
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div
+      class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border border-gray-200"
+    >
+      <div class="px-6 py-4" style="background-color: #8cb2ca">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="pi pi-search"></i>
+          Buscar Produtos
+        </h2>
+      </div>
+
+      <div class="p-6">
+        <!-- Busca -->
+        <div class="mb-6">
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-search"></i>
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange($event)"
+              placeholder="Buscar por código ou nome do produto..."
+              class="w-full"
+            />
+          </span>
+        </div>
+
+        <!-- Lista de Produtos -->
+        @if (loadingProducts && produtosDisponiveis.length === 0) {
+          <div class="flex justify-center items-center py-12">
+            <p-progressSpinner
+              styleClass="w-12 h-12"
+              strokeWidth="4"
+            ></p-progressSpinner>
+          </div>
+        } @else if (produtosDisponiveis.length === 0) {
+          <div class="text-center py-12">
+            <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 text-lg">Nenhum produto encontrado</p>
+          </div>
+        } @else {
+          <div class="overflow-y-auto mb-6" style="max-height: 200px">
+            <div class="space-y-2">
+              @for (produto of produtosDisponiveis; track produto.id) {
+                <div
+                  class="border border-gray-200 rounded-lg px-4 py-2 hover:shadow-sm transition-all flex items-center justify-between gap-4"
+                  [class.border-green-500]="isProdutoAdicionado(produto.id)"
+                  [class.bg-green-50]="isProdutoAdicionado(produto.id)"
+                  style="background-color: #f9fafb"
+                >
+                  <div class="flex-1 min-w-0 flex items-center gap-3">
+                    <p class="font-semibold text-sm" style="color: #2b485a">
+                      {{ produto.codigo }}
+                    </p>
+                    <p class="text-sm text-gray-600 truncate flex-1">
+                      {{ produto.descricao }}
+                    </p>
+                    <p-tag
+                      [value]="'Saldo: ' + produto.saldo.toString()"
+                      [severity]="
+                        produto.saldo > 10
+                          ? 'success'
+                          : produto.saldo > 0
+                            ? 'warning'
+                            : 'danger'
+                      "
+                      styleClass="text-xs px-1"
+                    ></p-tag>
+                  </div>
+
+                  <div class="flex-shrink-0">
+                    @if (isProdutoAdicionado(produto.id)) {
+                      <p-button
+                        icon="pi pi-check"
+                        severity="success"
+                        [text]="true"
+                        [disabled]="true"
+                        styleClass="p-button-sm"
+                        pTooltip="Produto adicionado"
+                      ></p-button>
+                    } @else {
+                      <p-button
+                        icon="pi pi-plus"
+                        styleClass="p-button-sm bg-[#3B82F6] text-white border-[#3B82F6] hover:opacity-70 py-2"
+                        [disabled]="produto.saldo < 1"
+                        (onClick)="addProdutoToNota(produto)"
+                        pTooltip="Adicionar produto"
+                      ></p-button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (hasMoreProducts) {
+            <div class="flex justify-center">
+              <p-button
+                [label]="loadingProducts ? '' : 'Carregar Mais Produtos'"
+                icon="pi pi-angle-down"
+                severity="secondary"
+                [outlined]="true"
+                [loading]="loadingProducts"
+                (onClick)="loadMoreProdutos()"
+                styleClass="gap-2"
+              ></p-button>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border border-gray-200"
+    >
+      <div class="px-6 py-4" style="background-color: #2b485a">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="pi pi-shopping-cart"></i>
+          Itens da Nota Fiscal
+        </h2>
+      </div>
+
+      <div class="p-6">
+        @if (itens.length === 0) {
+          <div class="text-center py-12">
+            <i class="pi pi-shopping-cart text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 text-lg mb-2">
+              Nenhum item adicionado à nota fiscal
+            </p>
+            <p class="text-gray-400 text-sm">
+              Busque e adicione produtos acima para criar a nota fiscal
+            </p>
+          </div>
+        } @else {
+          <form [formGroup]="notaForm" (ngSubmit)="onSubmit()">
+            <div formArrayName="itens" class="space-y-4">
+              @for (item of itens.controls; track $index) {
+                <div
+                  class="border-2 border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                  style="background-color: #f4f4f4"
+                >
+                  <div [formGroupName]="$index">
+                    <div class="flex items-center justify-between mb-4">
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="text-white rounded-full w-10 h-10 flex items-center justify-center font-bold"
+                          style="background-color: #8cb2ca"
+                        >
+                          {{ $index + 1 }}
+                        </div>
+                        <p-tag
+                          [value]="'Saldo: ' + getSaldoDisponivel($index)"
+                          [severity]="
+                            getSaldoDisponivel($index) > 10
+                              ? 'success'
+                              : getSaldoDisponivel($index) > 0
+                                ? 'warning'
+                                : 'danger'
+                          "
+                          styleClass="font-medium text-xs px-1"
+                        ></p-tag>
+                      </div>
+                      <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [rounded]="true"
+                        [text]="true"
+                        type="button"
+                        (onClick)="removeItem($index)"
+                        pTooltip="Remover produto"
+                        tooltipPosition="left"
+                      ></p-button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <!-- Informações do Produto -->
+                      <div class="flex flex-col justify-center space-y-2">
+                        <label
+                          class="block text-sm font-semibold text-gray-700"
+                        >
+                          Produto
+                        </label>
+                        <p class="font-semibold" style="color: #2b485a">
+                          {{ getCodigo($index) }}
+                        </p>
+                        <p class="text-sm text-gray-600">
+                          {{ getDescricao($index) }}
+                        </p>
+                      </div>
+
+                      <!-- Campo de Quantidade -->
+                      <div class="flex flex-col space-y-2">
+                        <label
+                          class="block text-sm font-semibold text-gray-700"
+                        >
+                          Quantidade <span class="text-red-500">*</span>
+                        </label>
+                        <p-inputNumber
+                          formControlName="quantidade"
+                          [min]="1"
+                          [max]="getSaldoDisponivel($index)"
+                          [step]="1"
+                          [showButtons]="true"
+                          [buttonLayout]="'horizontal'"
+                          [incrementButtonIcon]="'pi pi-plus'"
+                          [decrementButtonIcon]="'pi pi-minus'"
+                          (onBlur)="validateQuantidade($index)"
+                          styleClass="w-full"
+                          [inputStyle]="{ width: '100%' }"
+                        ></p-inputNumber>
+                        <small class="text-gray-600 flex items-center gap-1">
+                          <i class="pi pi-info-circle"></i>
+                          Disponível:
+                          <strong>{{ getSaldoDisponivel($index) }}</strong>
+                          unidade(s)
+                        </small>
+                        @if (
+                          item.get("quantidade")?.hasError("required") &&
+                          item.get("quantidade")?.touched
+                        ) {
+                          <small class="text-red-500">
+                            <i class="pi pi-exclamation-circle mr-1"></i>
+                            Quantidade é obrigatória
+                          </small>
+                        }
+                        @if (item.get("quantidade")?.hasError("min")) {
+                          <small class="text-red-500">
+                            <i class="pi pi-exclamation-circle mr-1"></i>
+                            Quantidade mínima: 1
+                          </small>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <hr class="my-8 border-gray-300" />
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <p-button
+                [label]="
+                  loading ? 'Criando Nota Fiscal...' : 'Criar Nota Fiscal'
+                "
+                icon="pi pi-check"
+                styleClass="flex-1 bg-[#FC064C] text-white border-[#FC064C] hover:bg-[#d9053f] gap-2 px-3 py-2"
+                type="submit"
+                [disabled]="isFormDisabled"
+                [loading]="loading"
+              ></p-button>
+              <p-button
+                label="Cancelar"
+                icon="pi pi-times"
+                severity="danger"
+                [outlined]="true"
+                type="button"
+                (onClick)="cancel()"
+                [disabled]="loading"
+                styleClass="flex-1 gap-2 px-3 py-2"
+              ></p-button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    @if (itens.length > 0) {
+      <div
+        class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+      >
+        <div class="px-6 py-4" style="background-color: #2b485a">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="pi pi-chart-bar"></i>
+            Resumo da Nota Fiscal
+          </h2>
+        </div>
+
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div
+              class="rounded-lg p-6 border-2 border-gray-200"
+              style="background-color: #f4f4f4"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="flex justify-center items-center !w-16 !h-16 text-white rounded-full"
+                  style="background-color: #8cb2ca"
+                >
+                  <i class="pi pi-shopping-cart text-3xl"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-gray-600 mb-1">
+                    Total de Itens
+                  </p>
+                  <p class="text-4xl font-bold" style="color: #444444">
+                    {{ itens.length }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="rounded-lg p-6 border-2 border-gray-200"
+              style="background-color: #f4f4f4"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="flex justify-center items-center !w-16 !h-16 text-white rounded-full"
+                  style="background-color: #fc064c"
+                >
+                  <i class="pi pi-box text-3xl"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-gray-600 mb-1">
+                    Quantidade Total
+                  </p>
+                  <p class="text-4xl font-bold" style="color: #444444">
+                    {{ getTotalQuantidade() }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,271 @@
+<p-toast position="top-right"></p-toast>
+
+<div
+  class="min-h-screen py-8 px-4 sm:px-6 lg:px-8"
+  style="background-color: #f4f4f4"
+>
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-3" style="color: #444444">
+      Cadastro de Produtos
+    </h1>
+    <div
+      class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border border-gray-200"
+    >
+      <div class="px-6 py-4" style="background-color: #2b485a">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i
+            class="pi"
+            [ngClass]="editMode ? 'pi-pencil' : 'pi-plus-circle'"
+          ></i>
+          {{ editMode ? "Editar produto" : "Novo produto" }}
+        </h2>
+      </div>
+
+      <div class="p-6">
+        <form [formGroup]="produtoForm" (ngSubmit)="onSubmit()">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Código -->
+            <div class="space-y-2">
+              <label
+                for="codigo"
+                class="block text-sm font-semibold text-gray-700"
+              >
+                Código <span class="text-red-500">*</span>
+              </label>
+              <input
+                pInputText
+                id="codigo"
+                formControlName="codigo"
+                placeholder="Ex: PROD001"
+                maxlength="50"
+                class="w-full"
+                [class.p-invalid]="
+                  produtoForm.get('codigo')?.hasError('required') &&
+                  produtoForm.get('codigo')?.touched
+                "
+              />
+              @if (
+                produtoForm.get("codigo")?.hasError("required") &&
+                produtoForm.get("codigo")?.touched
+              ) {
+                <small class="text-red-500 block mt-1">
+                  <i class="pi pi-exclamation-circle mr-1"></i>Código é
+                  obrigatório
+                </small>
+              }
+            </div>
+
+            <!-- Descrição -->
+            <div class="space-y-2">
+              <label
+                for="descricao"
+                class="block text-sm font-semibold text-gray-700"
+              >
+                Descrição <span class="text-red-500">*</span>
+              </label>
+              <input
+                pInputText
+                id="descricao"
+                formControlName="descricao"
+                placeholder="Descrição do produto"
+                maxlength="200"
+                class="w-full"
+                [class.p-invalid]="
+                  produtoForm.get('descricao')?.hasError('required') &&
+                  produtoForm.get('descricao')?.touched
+                "
+              />
+              @if (
+                produtoForm.get("descricao")?.hasError("required") &&
+                produtoForm.get("descricao")?.touched
+              ) {
+                <small class="text-red-500 block mt-1">
+                  <i class="pi pi-exclamation-circle mr-1"></i>Descrição é
+                  obrigatória
+                </small>
+              }
+            </div>
+
+            <!-- Saldo -->
+            <div class="space-y-2">
+              <label
+                for="saldo"
+                class="block text-sm font-semibold text-gray-700"
+              >
+                Saldo Inicial <span class="text-red-500">*</span>
+              </label>
+              <input
+                pInputText
+                type="number"
+                id="saldo"
+                formControlName="saldo"
+                min="0"
+                [readonly]="editMode"
+                class="w-full"
+                [class.p-invalid]="
+                  produtoForm.get('saldo')?.invalid &&
+                  produtoForm.get('saldo')?.touched
+                "
+              />
+              @if (editMode) {
+                <small class="text-gray-500 block mt-1">
+                  <i class="pi pi-info-circle mr-1"></i>O saldo não pode ser
+                  editado manualmente
+                </small>
+              }
+              @if (produtoForm.get("saldo")?.hasError("min")) {
+                <small class="text-red-500 block mt-1">
+                  <i class="pi pi-exclamation-circle mr-1"></i>Saldo não pode
+                  ser negativo
+                </small>
+              }
+            </div>
+          </div>
+
+          <div class="flex gap-3 mt-6 pt-6 border-t">
+            <p-button
+              [label]="editMode ? 'Atualizar Produto' : 'Cadastrar Produto'"
+              [icon]="editMode ? 'pi pi-check' : 'pi pi-plus'"
+              type="submit"
+              [disabled]="produtoForm.invalid || loading"
+              [loading]="loading"
+              styleClass="bg-[#FC064C] text-white border-[#FC064C] hover:bg-[#d9053f] gap-2 px-3 py-2"
+            ></p-button>
+
+            @if (editMode) {
+              <p-button
+                label="Cancelar Edição"
+                icon="pi pi-times"
+                severity="primary"
+                [outlined]="true"
+                type="button"
+                (onClick)="resetForm()"
+                styleClass="gap-2 px-3 py-2"
+              ></p-button>
+            }
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+    >
+      <div class="px-6 py-4" style="background-color: #2b485a">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="pi pi-list"></i>
+          Produtos Cadastrados
+        </h2>
+      </div>
+
+      <div class="p-6">
+        <div class="mb-6">
+          <span class="p-input-icon-left w-full md:w-1/2">
+            <i class="pi pi-search" style="color: #8cb2ca"></i>
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="filtro"
+              (ngModelChange)="onFiltroChange()"
+              placeholder="Filtrar por Código ou Descrição..."
+              class="w-full"
+            />
+          </span>
+        </div>
+
+        @if (filtro) {
+          <div class="mb-4 flex items-center gap-2">
+            <p-tag
+              [value]="totalRecords.toString() + ' produto(s) encontrado(s)'"
+              severity="info"
+              icon="pi pi-filter"
+              styleClass="text-base font-medium px-3 py-2"
+            ></p-tag>
+          </div>
+        }
+
+        <p-table
+          [value]="produtos"
+          [tableStyle]="{ 'min-width': '100%' }"
+          styleClass="p-datatable-striped"
+          [lazy]="true"
+          (onLazyLoad)="onLazyLoad($event)"
+          [totalRecords]="totalRecords"
+          [first]="first"
+          [paginator]="true"
+          [rows]="10"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} produto(s)"
+          [loading]="loading"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="font-bold text-gray-700 text-base">Código</th>
+              <th class="font-bold text-gray-700 text-base">Descrição</th>
+              <th class="font-bold text-gray-700 text-center text-base">
+                Saldo
+              </th>
+              <th
+                class="font-bold text-gray-700 text-center text-base"
+                style="width: 120px"
+              >
+                Ações
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-produto>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="font-mono font-semibold text-gray-800">
+                {{ produto.codigo }}
+              </td>
+              <td class="text-gray-700">{{ produto.descricao }}</td>
+              <td class="text-center">
+                <p-tag
+                  [value]="produto.saldo.toString()"
+                  [severity]="
+                    produto.saldo < 5
+                      ? 'danger'
+                      : produto.saldo < 10
+                        ? 'warning'
+                        : 'success'
+                  "
+                  [icon]="
+                    produto.saldo < 5
+                      ? 'pi pi-exclamation-triangle'
+                      : 'pi pi-check-circle'
+                  "
+                  styleClass="text-base font-semibold px-3 py-2"
+                ></p-tag>
+              </td>
+              <td class="text-center">
+                <p-button
+                  icon="pi pi-pencil"
+                  [rounded]="true"
+                  [text]="true"
+                  styleClass="text-[#8CB2CA] hover:bg-[#8CB2CA] hover:bg-opacity-10"
+                  (onClick)="editProduto(produto)"
+                  pTooltip="Editar produto"
+                  tooltipPosition="bottom"
+                ></p-button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center py-12">
+                <div class="flex flex-col items-center gap-3 text-gray-400">
+                  <i class="pi pi-inbox text-6xl"></i>
+                  <p class="text-lg font-semibold">Nenhum produto encontrado</p>
+                  <p class="text-sm">
+                    Comece cadastrando seu primeiro produto acima
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

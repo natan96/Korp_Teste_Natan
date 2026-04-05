@@ -1,0 +1,6 @@
+@Korp_Teste_Natan.Server_HostAddress = http://localhost:5090
+
+GET {{Korp_Teste_Natan.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

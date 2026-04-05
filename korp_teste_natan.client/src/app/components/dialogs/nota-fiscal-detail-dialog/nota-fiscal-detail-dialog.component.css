@@ -1,0 +1,69 @@
+/* Estilos do Dialog */
+::ng-deep .nota-fiscal-detail-dialog {
+  max-width: 1400px !important;
+}
+
+::ng-deep .nota-fiscal-detail-dialog .p-dialog-content {
+  padding: 2rem !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Quando maximizado, ocupar toda a tela de forma adequada */
+::ng-deep .nota-fiscal-detail-dialog.p-dialog-maximized {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+}
+
+::ng-deep .nota-fiscal-detail-dialog.p-dialog-maximized .p-dialog-content {
+  height: auto !important;
+  max-height: calc(100vh - 180px) !important;
+  padding: 2.5rem !important;
+}
+
+/* Garantir que o conteúdo preencha o espaço */
+::ng-deep .nota-fiscal-detail-dialog .p-dialog-content > div {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100% !important;
+}
+
+/* Header do dialog */
+::ng-deep .nota-fiscal-detail-dialog .p-dialog-header {
+  padding: 1.5rem 2rem !important;
+  background-color: #f9fafb !important;
+  border-bottom: 2px solid #e5e7eb !important;
+}
+
+::ng-deep .nota-fiscal-detail-dialog .p-dialog-title {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: #2b485a !important;
+}
+
+/* Tabela responsiva com tamanhos adequados */
+::ng-deep .nota-fiscal-detail-dialog .p-datatable .p-datatable-thead > tr > th {
+  padding: 1rem !important;
+  font-size: 0.875rem !important;
+  background-color: #f9fafb !important;
+}
+
+::ng-deep .nota-fiscal-detail-dialog .p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem !important;
+  font-size: 0.875rem !important;
+}
+
+::ng-deep .nota-fiscal-detail-dialog .p-datatable .p-datatable-tbody > tr {
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+::ng-deep
+  .nota-fiscal-detail-dialog
+  .p-datatable
+  .p-datatable-tbody
+  > tr:last-child {
+  border-bottom: none !important;
+}

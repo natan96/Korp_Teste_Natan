@@ -1,0 +1,246 @@
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog
+  [style]="{ width: '500px' }"
+  styleClass="rounded-xl"
+  [header]="'Confirmar Ação'"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>
+
+<div
+  class="min-h-screen py-8 px-4 sm:px-6 lg:px-8"
+  style="background-color: #f4f4f4"
+>
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold" style="color: #444444">Notas Fiscais</h1>
+      <p class="text-gray-600">
+        Gerencie e imprima suas notas fiscais emitidas
+      </p>
+    </div>
+
+    <div
+      class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border border-gray-200"
+    >
+      <div class="px-6 py-4" style="background-color: #2b485a">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="pi pi-filter"></i>
+          Filtros e Resumo
+        </h2>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <label
+              for="filtro-status"
+              class="block text-sm font-semibold text-gray-700"
+            >
+              Filtrar por Status
+            </label>
+            <p-dropdown
+              id="filtro-status"
+              [options]="statusOptions"
+              [(ngModel)]="filtroStatusValue"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="onFiltroStatusChange($event.value)"
+              [style]="{ width: '100%' }"
+              placeholder="Selecione um status"
+              appendTo="body"
+            ></p-dropdown>
+          </div>
+
+          <div
+            class="rounded-lg p-4 border-2 border-gray-200"
+            style="background-color: #f4f4f4"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="flex justify-center items-center !w-14 !h-14 text-white rounded-full"
+                style="background-color: #8cb2ca"
+              >
+                <i class="pi pi-file text-2xl"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-600">Notas Exibidas</p>
+                <p class="text-3xl font-bold" style="color: #444444">
+                  {{ totalRecords() }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="rounded-lg p-4 border-2 border-gray-200"
+            style="background-color: #f4f4f4"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="flex justify-center items-center !w-14 !h-14 text-white rounded-full"
+                style="background-color: #fc064c"
+              >
+                <i class="pi pi-shopping-cart text-2xl"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-600">Total de Itens</p>
+                <p class="text-3xl font-bold" style="color: #444444">
+                  {{ totalItensFiltrados() }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+    >
+      <div class="px-6 py-4" style="background-color: #2b485a">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="pi pi-list"></i>
+          Listagem de Notas Fiscais
+        </h2>
+      </div>
+
+      <div class="p-6">
+        <p-table
+          [value]="notasFiscaisFiltradas()"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          styleClass="p-datatable-striped"
+          [lazy]="true"
+          (onLazyLoad)="onLazyLoad($event)"
+          [totalRecords]="totalRecords()"
+          [first]="first"
+          [rows]="10"
+          [paginator]="true"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} notas"
+          [loading]="loading"
+        >
+          >
+          <ng-template pTemplate="header">
+            <tr class="bg-gray-50">
+              <th class="font-bold text-gray-700 text-base">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-hashtag"></i>
+                  Número
+                </div>
+              </th>
+              <th class="font-bold text-gray-700 text-base">
+                <div class="flex justify-center items-center gap-2">
+                  <i class="pi pi-info-circle"></i>
+                  Status
+                </div>
+              </th>
+              <th class="font-bold text-gray-700 text-base">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-calendar"></i>
+                  Data de Emissão
+                </div>
+              </th>
+              <th class="font-bold text-gray-700 text-base">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-shopping-cart"></i>
+                  Itens
+                </div>
+              </th>
+              <th class="text-center font-bold text-gray-700 text-base">
+                <div class="flex items-center justify-center gap-2">
+                  <i class="pi pi-cog"></i>
+                  Ações
+                </div>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-nota>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td>
+                <span class="font-bold text-lg text-blue-600"
+                  >NF-{{ nota.numero }}</span
+                >
+              </td>
+              <td class="flex justify-center items-center">
+                <p-tag
+                  [value]="keyStatusClass[nota.status].label"
+                  [severity]="nota.status === 0 ? 'success' : 'secondary'"
+                  [icon]="nota.status === 0 ? 'pi pi-lock-open' : 'pi pi-lock'"
+                  [rounded]="true"
+                  styleClass="font-medium gap-1 px-3 py-2"
+                ></p-tag>
+              </td>
+              <td>
+                <div class="flex items-center gap-2 text-gray-700">
+                  <i class="pi pi-calendar text-gray-400"></i>
+                  <span class="font-medium">{{
+                    nota.dataEmissao | date: "dd/MM/yyyy"
+                  }}</span>
+                  <span class="text-gray-500">{{
+                    nota.dataEmissao | date: "HH:mm" : "UTC-3"
+                  }}</span>
+                </div>
+              </td>
+              <td>
+                <p-tag
+                  [value]="(sumNotasItems().get(nota.id) || 0) + ' item(ns)'"
+                  severity="info"
+                  [rounded]="true"
+                  styleClass="font-medium px-3 py-2"
+                ></p-tag>
+              </td>
+              <td class="text-center">
+                <div class="flex justify-center items-center gap-2">
+                  <p-button
+                    icon="pi pi-eye"
+                    [rounded]="true"
+                    [outlined]="true"
+                    styleClass="text-[#8CB2CA] border-[#8CB2CA] hover:bg-[#8CB2CA] hover:text-white"
+                    (onClick)="visualizarNota(nota)"
+                    pTooltip="Visualizar detalhes e itens"
+                    tooltipPosition="bottom"
+                  ></p-button>
+
+                  <p-button
+                    [label]="isImprimindo(nota.id) ? 'Imprimindo...' : ''"
+                    icon="pi pi-print"
+                    styleClass="bg-[#FC064C] text-white border-[#FC064C] hover:bg-[#d9053f]"
+                    [outlined]="nota.status === 1"
+                    [disabled]="!podeImprimir(nota)"
+                    (onClick)="imprimirNota(nota)"
+                    [loading]="isImprimindo(nota.id)"
+                    [pTooltip]="
+                      nota.status === 1
+                        ? 'Nota já foi impressa'
+                        : 'Imprimir e fechar nota fiscal'
+                    "
+                    tooltipPosition="bottom"
+                  ></p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="text-center p-12">
+                <div class="flex flex-col items-center justify-center">
+                  <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
+                  <p class="text-gray-500 text-lg font-medium mb-2">
+                    Nenhuma nota fiscal encontrada
+                  </p>
+                  <p class="text-gray-400 text-sm">
+                    @if (filtroStatus() !== -1) {
+                      Tente alterar os filtros ou criar uma nova nota fiscal
+                    } @else {
+                      Comece criando sua primeira nota fiscal
+                    }
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>

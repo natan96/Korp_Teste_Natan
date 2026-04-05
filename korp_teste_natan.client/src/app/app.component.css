@@ -1,0 +1,31 @@
+﻿::ng-deep .app-toolbar.p-toolbar {
+  background: #2b485a !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  padding: 1rem 2rem !important;
+}
+
+::ng-deep .app-toolbar.p-toolbar .p-toolbar-group-start,
+::ng-deep .app-toolbar.p-toolbar .p-toolbar-group-end {
+  gap: 1rem;
+}
+
+.content {
+  min-height: calc(100vh - 64px);
+}
+
+/* Estilos para links de navegação na toolbar */
+.app-toolbar a {
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-toolbar a:hover {
+  text-decoration: none;
+}

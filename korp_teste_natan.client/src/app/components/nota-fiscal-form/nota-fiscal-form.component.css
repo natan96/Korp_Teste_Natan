@@ -1,0 +1,46 @@
+::ng-deep .produto-input .p-inputtext {
+  border: none !important;
+}
+
+::ng-deep .p-inputnumber {
+  width: 100%;
+}
+
+::ng-deep .p-inputnumber-horizontal {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+}
+
+::ng-deep .p-inputnumber-horizontal .p-inputnumber-input {
+  order: 2;
+  flex: 1;
+  text-align: center;
+}
+
+::ng-deep .p-inputnumber-horizontal .p-inputnumber-button-group {
+  display: flex !important;
+}
+
+::ng-deep .p-inputnumber-horizontal .p-inputnumber-button-down {
+  order: 1;
+}
+
+::ng-deep .p-inputnumber-horizontal .p-inputnumber-button-up {
+  order: 3;
+}
+
+::ng-deep .p-inputnumber-button {
+  width: 2.5rem !important;
+  height: auto !important;
+}
+
+::ng-deep .p-inputnumber-button .p-button-icon {
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  ::ng-deep .p-inputnumber-button {
+    width: 2rem !important;
+  }
+}

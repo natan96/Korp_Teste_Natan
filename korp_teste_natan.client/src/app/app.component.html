@@ -1,0 +1,49 @@
+﻿<p-toolbar styleClass="app-toolbar">
+  <ng-template pTemplate="start">
+    <div class="flex items-center gap-4">
+      <img
+        src="images/korp.png"
+        alt="Korp Logo"
+        width="20"
+        height="20"
+        class="rounded border border-[#253D4D]"
+        style="box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5)"
+      />
+      <h1 class="text-2xl font-bold text-white m-0">
+        Sistemas de Notas Fiscais - Korp
+      </h1>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <div class="flex gap-3">
+      <a
+        routerLink="/produtos"
+        class="flex items-center gap-2 px-4 py-2 text-white border border-white rounded hover:bg-white hover:bg-opacity-10 transition-colors no-underline"
+      >
+        <i class="pi pi-box"></i>
+        <span>Produtos</span>
+      </a>
+      <a
+        routerLink="/notas"
+        class="flex items-center gap-2 px-4 py-2 text-white border border-white rounded hover:bg-white hover:bg-opacity-10 transition-colors no-underline"
+      >
+        <i class="pi pi-file"></i>
+        <span>Notas Fiscais</span>
+      </a>
+      <a
+        routerLink="/notas/nova"
+        class="flex items-center gap-2 px-4 py-2 text-white rounded transition-colors no-underline"
+        style="background-color: #fc064c; border: 1px solid #fc064c"
+        onmouseover="this.style.backgroundColor = '#d9053f'"
+        onmouseout="this.style.backgroundColor = '#FC064C'"
+      >
+        <i class="pi pi-plus"></i>
+        <span>Nova Nota Fiscal</span>
+      </a>
+    </div>
+  </ng-template>
+</p-toolbar>
+
+<div class="content relative" style="background-color: #f4f4f4">
+  <router-outlet></router-outlet>
+</div>
