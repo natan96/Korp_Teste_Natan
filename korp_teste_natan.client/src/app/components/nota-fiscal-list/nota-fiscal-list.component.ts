@@ -205,6 +205,8 @@ export class NotaFiscalListComponent implements OnInit, OnDestroy {
         `• Não poderá ser desfeita`,
       header: 'Atenção',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Imprimir',
+      rejectLabel: 'Não',
       accept: () => {
         this.imprimindoMapSignal.update((map) => {
           const newMap = new Map(map);
